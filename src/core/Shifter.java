@@ -56,6 +56,9 @@ public abstract class Shifter extends Thread{
 	}
 	
 	public void end() throws InterruptedException {
+		for (Sorter sorter : Sorters)
+			sorter.end();
+		
 		endSemaphore.acquire();
 		endSemaphore.release();
 
