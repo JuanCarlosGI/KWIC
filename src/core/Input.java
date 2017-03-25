@@ -19,7 +19,7 @@ public abstract class Input extends Thread {
 	private Semaphore endSemaphore;
 	
 	public void setup() {
-		endSemaphore = new Semaphore(-Shifters.size(), true);
+		endSemaphore = new Semaphore(-Shifters.size() + 1, true);
 		for (Shifter shifter : Shifters) {
 			shifter.setup(endSemaphore);
 		}
@@ -35,10 +35,13 @@ public abstract class Input extends Thread {
 
             for (Shifter shifter : Shifters)
                 shifter.accept(line);
-        } while (line != "");
+        } while (!line.equals(""));
 	}
 	
 	public void end() throws InterruptedException {
+		for (Shifter shifter : Shifters)
+			shifter.end();
+		
 		endSemaphore.acquire();
 		endSemaphore.release();
 	}

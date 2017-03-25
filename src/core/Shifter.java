@@ -27,7 +27,7 @@ public abstract class Shifter extends Thread{
 	protected abstract void handleRotations(String line);
 
 	public void setup(Semaphore inputSemaphore) {
-		endSemaphore = new Semaphore(-Sorters.size(), true);
+		endSemaphore = new Semaphore(-Sorters.size() + 1, true);
 		this.inputSemaphore = inputSemaphore;
 		
 		for (Sorter sorter : Sorters) {
@@ -44,7 +44,7 @@ public abstract class Shifter extends Thread{
 	    	try {
 				queueSemaphore.acquire();
 			} catch (InterruptedException e) {
-				System.out.println("queueSemaphore for shifter was interrupted.");
+				System.out.println(e);
 			}
 	    	
 	        queueLock.lock();
@@ -52,14 +52,14 @@ public abstract class Shifter extends Thread{
             queueLock.unlock();
 	
 	        handleRotations(line);
-	    } while (line != "");
-	    
-	    inputSemaphore.release();
+	    } while (!line.equals(""));
 	}
 	
 	public void end() throws InterruptedException {
 		endSemaphore.acquire();
 		endSemaphore.release();
+
+	    inputSemaphore.release();
 	}
 	
 	public void accept(String line) {
