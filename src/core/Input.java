@@ -3,20 +3,20 @@ package core;
 import java.util.LinkedList;
 
 public abstract class Input extends Thread {
-	private LinkedList<Shifter> Shifters = new LinkedList<Shifter>();
+	private LinkedList<Shifter> shifters = new LinkedList<Shifter>();
 	
 	public void subscribe(Shifter shifter) {
-		Shifters.add(shifter);
+		shifters.add(shifter);
 	}
 	
 	public void unsubscribe(Shifter shifter) {
-		Shifters.remove(shifter);
+		shifters.remove(shifter);
 	}
 	
 	protected abstract String nextLine();
 	
 	public void execute() throws InterruptedException {
-		for (Shifter shifter : Shifters) {
+		for (Shifter shifter : shifters) {
 			shifter.setup();
 		}
 		
@@ -30,13 +30,13 @@ public abstract class Input extends Thread {
         {
             line = nextLine();
 
-            for (Shifter shifter : Shifters)
+            for (Shifter shifter : shifters)
                 shifter.accept(line);
         } while (!line.equals(""));
 	}
 	
 	public void await() throws InterruptedException {
-		for (Shifter shifter : Shifters)
+		for (Shifter shifter : shifters)
 			shifter.await();
 	}
 }

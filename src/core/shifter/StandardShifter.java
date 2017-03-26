@@ -11,7 +11,7 @@ public class StandardShifter extends Shifter{
 	
 	@Override
 	protected void handleRotations(String line) {
-		for (Sorter sorter : Sorters) {
+		for (Sorter sorter : sorters) {
 			sorter.accept(line);
 		}
 		
@@ -21,7 +21,7 @@ public class StandardShifter extends Shifter{
 			fragments.add(aux);
 			
 			String newLine = String.join(" ", fragments);
-			for (Sorter sorter : Sorters) {
+			for (Sorter sorter : sorters) {
 				sorter.accept(newLine);
 			}
 		}

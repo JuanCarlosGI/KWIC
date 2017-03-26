@@ -11,20 +11,20 @@ public abstract class Shifter extends Thread{
 	private Queue<String> queue = new LinkedList<String>();
 	private Lock queueLock = new ReentrantLock();
 	
-	protected LinkedList<Sorter> Sorters = new LinkedList<Sorter>();
+	protected LinkedList<Sorter> sorters = new LinkedList<Sorter>();
 	
 	public void subscribe(Sorter sorter) {
-		Sorters.add(sorter);
+		sorters.add(sorter);
 	}
 	
 	public void unsubscribe(Shifter shifter) {
-		Sorters.remove(shifter);
+		sorters.remove(shifter);
 	}
 	
 	protected abstract void handleRotations(String line);
 
 	public void setup() {
-		for (Sorter sorter : Sorters) {
+		for (Sorter sorter : sorters) {
 			sorter.setup();
 		}
 		
@@ -50,7 +50,7 @@ public abstract class Shifter extends Thread{
 	}
 	
 	public void await() throws InterruptedException {
-		for (Sorter sorter : Sorters)
+		for (Sorter sorter : sorters)
 			sorter.await();
 	}
 	
