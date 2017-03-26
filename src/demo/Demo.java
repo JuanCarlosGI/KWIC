@@ -13,13 +13,21 @@ public class Demo {
 	{
 		Input input = new FileInput("test.txt");
 		Shifter shifter = new StandardShifter();
-		Sorter sorter = new MergeSorter();
-		Writer consoleWriter = new ConsoleWriter();
-		Writer fileWriter = new FileWriter("output.txt");
 		
-		sorter.Subscribe(consoleWriter);
-		sorter.Subscribe(fileWriter);
-		shifter.subscribe(sorter);
+		Sorter treeSorter = new TreeSetSorter();
+		Writer treeConsoleWriter = new ConsoleWriter();
+		Writer treeFileWriter = new FileWriter("treeOutput.txt");
+		treeSorter.Subscribe(treeConsoleWriter);
+		treeSorter.Subscribe(treeFileWriter);
+		
+		Sorter mergeSorter = new MergeSorter();
+		Writer mergeConsoleWriter = new ConsoleWriter();
+		Writer mergeFileWriter = new FileWriter("mergeOutput.txt");
+		mergeSorter.Subscribe(mergeConsoleWriter);
+		mergeSorter.Subscribe(mergeFileWriter);
+		
+		shifter.subscribe(treeSorter);
+		shifter.subscribe(mergeSorter);
 		input.subscribe(shifter);
 		
 		input.execute();
