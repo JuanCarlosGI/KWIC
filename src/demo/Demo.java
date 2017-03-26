@@ -18,7 +18,6 @@ public class Demo {
 		shifter.subscribe(sorter);
 		input.subscribe(shifter);
 		
-		input.setup();
-		input.end();
+		input.execute();
 	}
 }

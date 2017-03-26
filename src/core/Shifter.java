@@ -7,9 +7,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class Shifter extends Thread{
-
-	private Semaphore endSemaphore;
-	private Semaphore inputSemaphore;
 	private Semaphore queueSemaphore = new Semaphore(0, true);
 	private Queue<String> queue = new LinkedList<String>();
 	private Lock queueLock = new ReentrantLock();
@@ -26,12 +23,9 @@ public abstract class Shifter extends Thread{
 	
 	protected abstract void handleRotations(String line);
 
-	public void setup(Semaphore inputSemaphore) {
-		endSemaphore = new Semaphore(-Sorters.size() + 1, true);
-		this.inputSemaphore = inputSemaphore;
-		
+	public void setup() {
 		for (Sorter sorter : Sorters) {
-			sorter.setup(endSemaphore);
+			sorter.setup();
 		}
 		
 		this.start();
@@ -55,14 +49,9 @@ public abstract class Shifter extends Thread{
 	    } while (!line.equals(""));
 	}
 	
-	public void end() throws InterruptedException {
+	public void await() throws InterruptedException {
 		for (Sorter sorter : Sorters)
-			sorter.end();
-		
-		endSemaphore.acquire();
-		endSemaphore.release();
-
-	    inputSemaphore.release();
+			sorter.await();
 	}
 	
 	public void accept(String line) {

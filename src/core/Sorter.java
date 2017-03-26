@@ -8,9 +8,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class Sorter extends Thread{
-	private Semaphore shifterSemaphore;
 	private Semaphore queueSemaphore = new Semaphore(0, true);
-	private Semaphore endSemaphore = new Semaphore(0,true);
 	private Queue<String> queue = new LinkedList<String>();
 	private Lock queueLock = new ReentrantLock();
 	protected List<Writer> Writers = new LinkedList<Writer>();
@@ -23,8 +21,7 @@ public abstract class Sorter extends Thread{
 		Writers.remove(writer);
 	}
 	
-	public void setup(Semaphore semaphore) {
-		shifterSemaphore = semaphore;
+	public void setup() {
 		this.start();
 	}
 	
@@ -53,10 +50,9 @@ public abstract class Sorter extends Thread{
 		
 		List<String> sorted = sort();
 		for (Writer writer : Writers) {
-			writer.write(sorted);
+			writer.setLines(sorted);
+			writer.start();
 		}
-		
-		endSemaphore.release();
 	}
 	
 	public void accept(String line) {
@@ -66,9 +62,9 @@ public abstract class Sorter extends Thread{
 		queueLock.unlock();
 	}
 	
-	public void end() throws InterruptedException {
-		endSemaphore.acquire();
-		endSemaphore.release();
-		shifterSemaphore.release();
+	public void await() throws InterruptedException {
+		for (Writer writer : Writers) {
+			writer.await();
+		}
 	}
 }

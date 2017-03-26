@@ -1,7 +1,6 @@
 package core;
 
 import java.util.LinkedList;
-import java.util.concurrent.Semaphore;
 
 public abstract class Input extends Thread {
 	private LinkedList<Shifter> Shifters = new LinkedList<Shifter>();
@@ -16,15 +15,13 @@ public abstract class Input extends Thread {
 	
 	protected abstract String nextLine();
 	
-	private Semaphore endSemaphore;
-	
-	public void setup() {
-		endSemaphore = new Semaphore(-Shifters.size() + 1, true);
+	public void execute() throws InterruptedException {
 		for (Shifter shifter : Shifters) {
-			shifter.setup(endSemaphore);
+			shifter.setup();
 		}
 		
 		this.start();
+		await();
 	}
 	
 	public void run() {
@@ -38,11 +35,8 @@ public abstract class Input extends Thread {
         } while (!line.equals(""));
 	}
 	
-	public void end() throws InterruptedException {
+	public void await() throws InterruptedException {
 		for (Shifter shifter : Shifters)
-			shifter.end();
-		
-		endSemaphore.acquire();
-		endSemaphore.release();
+			shifter.await();
 	}
 }
