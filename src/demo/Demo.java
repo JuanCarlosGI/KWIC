@@ -11,20 +11,20 @@ import core.writer.*;
 public class Demo {
 	public static void main(String[] args) throws InterruptedException, FileNotFoundException
 	{
-		Input input = new FileInput("test.txt");
-		Shifter shifter = new StandardShifter();
+		Input input = new Input(new FileInput("test.txt"));
+		Shifter shifter = new Shifter(new StandardShifter());
 		
-		Sorter treeSorter = new TreeSetSorter();
-		Writer treeConsoleWriter = new ConsoleWriter();
-		Writer treeFileWriter = new FileWriter("treeOutput.txt");
-		treeSorter.Subscribe(treeConsoleWriter);
-		treeSorter.Subscribe(treeFileWriter);
+		Sorter treeSorter = new Sorter(new TreeSetSorter());
+		Writer treeConsoleWriter = new Writer(new ConsoleWriter());
+		Writer treeFileWriter = new Writer(new FileWriter("treeOutput.txt"));
+		treeSorter.subscribe(treeConsoleWriter);
+		treeSorter.subscribe(treeFileWriter);
 		
-		Sorter mergeSorter = new MergeSorter();
-		Writer mergeConsoleWriter = new ConsoleWriter();
-		Writer mergeFileWriter = new FileWriter("mergeOutput.txt");
-		mergeSorter.Subscribe(mergeConsoleWriter);
-		mergeSorter.Subscribe(mergeFileWriter);
+		Sorter mergeSorter = new Sorter(new MergeSorter());
+		Writer mergeConsoleWriter = new Writer(new ConsoleWriter());
+		Writer mergeFileWriter = new Writer(new FileWriter("mergeOutput.txt"));
+		mergeSorter.subscribe(mergeConsoleWriter);
+		mergeSorter.subscribe(mergeFileWriter);
 		
 		shifter.subscribe(treeSorter);
 		shifter.subscribe(mergeSorter);

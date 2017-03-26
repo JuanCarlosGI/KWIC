@@ -5,17 +5,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import core.Input;
-
-public class FileInput extends Input {
+public class FileInput implements InputStrategy {
 	private BufferedReader reader;
 	
 	public FileInput(String fileName) throws FileNotFoundException {
 		 reader = new BufferedReader(new FileReader(fileName));
 	}
 	
-	@Override
-	protected String nextLine() {
+	public String nextLine() {
 		String line;
 		try {
 			line = reader.readLine();

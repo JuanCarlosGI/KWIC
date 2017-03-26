@@ -2,13 +2,12 @@ package core;
 
 import java.util.LinkedList;
 
+import core.input.InputStrategy;
+
 /**
  * The first filter in the KWIC system. This filter is in charge of
  * getting the input data, in whatever format it comes, and sending it
  * to all its subscribed shifters.
- * <p>
- * All its subclasses need not worry about the flow of data, and only
- * need to worry about specifying the functionality of getting a line.
  * <p>
  * End of input must be marked with an empty String.
  * <p>
@@ -16,24 +15,24 @@ import java.util.LinkedList;
  * implements threads to run concurrently to other filters.
  * @see Shifter
  */
-public abstract class Input extends Thread {
+public final class Input extends Thread {
 	private LinkedList<Shifter> shifters = new LinkedList<Shifter>();
-	private void await() throws InterruptedException {
-		for (Shifter shifter : shifters)
-			shifter.await();
-	}
+	private InputStrategy strategy;
 	
 	/**
-	 * Gets the next line in the input.
-	 * @return The line of text.
+	 * Initializes a new instance of the Input class, with the
+	 * specified strategy it will use to get lines.
+	 * @param strategy The strategy it will use.
 	 */
-	protected abstract String nextLine();
+	public Input(InputStrategy strategy) {
+		this.strategy = strategy;
+	}
 	
 	/**
 	 * Subscribes a Shifter to this Input.
 	 * @param shifter Shifter to subscribe.
 	 */
-	public final void subscribe(Shifter shifter) {
+	public void subscribe(Shifter shifter) {
 		shifters.add(shifter);
 	}
 	
@@ -41,7 +40,7 @@ public abstract class Input extends Thread {
 	 * Removes a Shifter from the list of subscribers.
 	 * @param Shifter to remove.
 	 */
-	public final void unsubscribe(Shifter shifter) {
+	public void unsubscribe(Shifter shifter) {
 		shifters.remove(shifter);
 	}
 	
@@ -50,24 +49,26 @@ public abstract class Input extends Thread {
 	 * @throws InterruptedException When the thread is interrupted
 	 * while waiting for its Shifters to finish.
 	 */
-	public final void execute() throws InterruptedException {
+	public void execute() throws InterruptedException {
 		for (Shifter shifter : shifters) {
 			shifter.setup();
 		}
 		
 		this.start();
-		await();
+
+		for (Shifter shifter : shifters)
+			shifter.await();
 	}
 	
 	/**
 	 * The main process of input, in charge of defining the behavior
 	 * of the thread it will run.
 	 */
-	public final void run() {
+	public void run() {
 		String line;
         do
         {
-            line = nextLine();
+            line = strategy.nextLine();
 
             for (Shifter shifter : shifters)
                 shifter.accept(line);

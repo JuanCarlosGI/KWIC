@@ -3,13 +3,25 @@ package core;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
+import core.writer.WriteStrategy;
+
 /**
  * The final filter of the KWIC System. It is in charge of printing
  * a set of lines in a parallel manner.
  */
-public abstract class Writer extends Thread{
+public final class Writer extends Thread{
 	private List<String> lines;
 	private Semaphore endSemaphore = new Semaphore(0, true);
+	private WriteStrategy strategy;
+	
+	/**
+	 * Initializes a new instance of the Writer class, with the
+	 * specified strategy it will use to write lines.
+	 * @param strategy The strategy it will use.
+	 */
+	public Writer(WriteStrategy strategy) {
+		this.strategy = strategy;
+	}
 	
 	/**
 	 * Sets the list of lines it will have to print.
@@ -20,16 +32,10 @@ public abstract class Writer extends Thread{
 	}
 	
 	/**
-	 * Method in charge of printing a set of lines.
-	 * @param lines Lines to be printed.
-	 */
-	protected abstract void write(List<String> lines);
-	
-	/**
 	 * Prints the list of lines that has been set.
 	 */
 	public void run() {
-		write(lines);
+		strategy.write(lines);
 		endSemaphore.release();
 	}
 	

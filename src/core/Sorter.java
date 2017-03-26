@@ -7,43 +7,38 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import core.sorter.SortStrategy;
+
 /**
  * The third filter of the KWIC System. It is in charge of sorting all
  * the rotations and sending the sorted list to all its Writers.
- * <p>
- * All its subclasses need not worry about the flow of data, and only
- * need to worry about specifying the functionality of sorting the 
- * lines.
  * <p>
  * End of input must be marked with an empty String.
  * <p>
  * It activates all its subscribed Writers concurrently.
  * @see Writer
  */
-public abstract class Sorter extends Thread{
+public final class Sorter extends Thread{
 	private Semaphore queueSemaphore = new Semaphore(0, true);
 	private Queue<String> queue = new LinkedList<String>();
 	private Lock queueLock = new ReentrantLock();
 	private List<Writer> writers = new LinkedList<Writer>();
+	private SortStrategy strategy;
 	
 	/**
-	 * Does processing needed to include a new line in the final
-	 * sorted result.
-	 * @param line The new line.
+	 * Initializes a new instance of the Sorter class, with the
+	 * specified strategy it will use to sort lines.
+	 * @param strategy The strategy it will use.
 	 */
-	public abstract void handleNewLine(String line);
-	
-	/**
-	 * Returns the sorted list of lines.
-	 * @return Sorted list of results.
-	 */
-	public abstract List<String> sort();
+	public Sorter(SortStrategy strategy) {
+		this.strategy = strategy;
+	}
 	
 	/**
 	 * Adds a writer to the subscriber list.
 	 * @param writer Writer to be added.
 	 */
-	public final void Subscribe(Writer writer) {
+	public void subscribe(Writer writer) {
 		writers.add(writer);
 	}
 	
@@ -51,14 +46,14 @@ public abstract class Sorter extends Thread{
 	 * Removes a writer from the subscriber list.
 	 * @param writer Writer to remove.
 	 */
-	public final void Unsubscribe(Writer writer) {
+	public void unsubscribe(Writer writer) {
 		writers.remove(writer);
 	}
 	
 	/**
 	 * Starts its own thread.
 	 */
-	public final void setup() {
+	public void setup() {
 		this.start();
 	}
 	
@@ -66,7 +61,7 @@ public abstract class Sorter extends Thread{
 	 * The main process of input, in charge of defining the behavior
 	 * of the thread it will run. 
 	 */
-	public final void run() {
+	public void run() {
 		while (true) {
 			try {
 				queueSemaphore.acquire();
@@ -82,10 +77,10 @@ public abstract class Sorter extends Thread{
 				break;
 			}
 			
-			handleNewLine(line);
+			strategy.handleNewLine(line);
 		}
 		
-		List<String> sorted = sort();
+		List<String> sorted = strategy.sort();
 		for (Writer writer : writers) {
 			writer.setLines(sorted);
 			writer.start();
@@ -96,7 +91,7 @@ public abstract class Sorter extends Thread{
 	 * Accepts a new line into its queue of lines that it will sort.
 	 * @param line The new line.
 	 */
-	public final void accept(String line) {
+	public void accept(String line) {
 		queueLock.lock();
 		queue.offer(line);
 		queueSemaphore.release();
@@ -109,7 +104,7 @@ public abstract class Sorter extends Thread{
 	 * @throws InterruptedException When the thread it is on is
 	 * interrupted.
 	 */
-	public final void await() throws InterruptedException {
+	public void await() throws InterruptedException {
 		for (Writer writer : writers) {
 			writer.await();
 		}

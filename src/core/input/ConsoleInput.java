@@ -4,14 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import core.Input;
-
-public class ConsoleInput extends Input {
+public class ConsoleInput implements InputStrategy {
 	
 	private BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
 
-	@Override
-	protected String nextLine() {
+	public String nextLine() {
 		try {
 			String line = buffer.readLine();
 			line = line.toLowerCase();

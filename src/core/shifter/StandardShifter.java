@@ -4,22 +4,18 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import core.Shifter;
-
-public class StandardShifter extends Shifter{
+public class StandardShifter implements ShiftStrategy {
 	private List<String> fragments;
 	private int shiftCounter;
 	private int size = 0;
 	
-	@Override
-	protected void setupRotations(String line) {
+	public void setupRotations(String line) {
 		fragments = new LinkedList<String>(Arrays.asList(line.split(" ")));
 		shiftCounter = 0;
 		size = fragments.size();
 	}
 
-	@Override
-	protected String nextRotation() {
+	public String nextRotation() {
 		if (size == 0 && shiftCounter == 0) {
 			shiftCounter++;
 			return "";	
