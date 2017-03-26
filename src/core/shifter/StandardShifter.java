@@ -5,26 +5,34 @@ import java.util.LinkedList;
 import java.util.List;
 
 import core.Shifter;
-import core.Sorter;
 
 public class StandardShifter extends Shifter{
+	private List<String> fragments;
+	private int shiftCounter;
+	private int size = 0;
 	
 	@Override
-	protected void handleRotations(String line) {
-		for (Sorter sorter : sorters) {
-			sorter.accept(line);
+	protected void setupRotations(String line) {
+		fragments = new LinkedList<String>(Arrays.asList(line.split(" ")));
+		shiftCounter = 0;
+		size = fragments.size();
+	}
+
+	@Override
+	protected String nextRotation() {
+		if (size == 0 && shiftCounter == 0) {
+			shiftCounter++;
+			return "";	
+		}
+		if (shiftCounter < size) {
+			String aux = fragments.remove(0);
+			fragments.add(aux);	
+			shiftCounter++;
+			
+			return String.join(" ", fragments);
 		}
 		
-		List<String> fragments = new LinkedList<String>(Arrays.asList(line.split(" ")));
-		for (int i = 1; i < fragments.size(); i++) {
-			String aux = fragments.remove(0);
-			fragments.add(aux);
-			
-			String newLine = String.join(" ", fragments);
-			for (Sorter sorter : sorters) {
-				sorter.accept(newLine);
-			}
-		}
+		return null;
 	}
 
 }
