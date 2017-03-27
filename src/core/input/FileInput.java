@@ -18,7 +18,7 @@ public class FileInput implements InputStrategy {
 		 reader = new BufferedReader(new FileReader(fileName));
 	}
 	
-	// Get the next line of the file
+	// Gets the next line of the file and returns it
 	public String nextLine() {
 		String line;
 		try {
