@@ -13,10 +13,12 @@ import java.io.IOException;
 public class FileInput implements InputStrategy {
 	private BufferedReader reader;
 	
+	// Constructor that initializes the file reader
 	public FileInput(String fileName) throws FileNotFoundException {
 		 reader = new BufferedReader(new FileReader(fileName));
 	}
 	
+	// Get the next line of the file
 	public String nextLine() {
 		String line;
 		try {
