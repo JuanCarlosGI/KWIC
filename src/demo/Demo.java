@@ -13,23 +13,23 @@ public class Demo {
 	{
 		Input input = new Input(new FileInput("test.txt"));
 		Shifter shifter = new Shifter(new StandardShifter());
-		
-		Sorter treeSorter = new Sorter(new TreeSetSorter());
-		Writer treeConsoleWriter = new Writer(new ConsoleWriter());
-		Writer treeFileWriter = new Writer(new FileWriter("treeOutput.txt"));
-		treeSorter.subscribe(treeConsoleWriter);
-		treeSorter.subscribe(treeFileWriter);
-		
+
+		//Sorter treeSorter = new Sorter(new TreeSetSorter());
+		//Writer treeConsoleWriter = new Writer(new ConsoleWriter());
+		//Writer treeFileWriter = new Writer(new FileWriter("treeOutput.txt"));
+		//treeSorter.subscribe(treeConsoleWriter);
+		//treeSorter.subscribe(treeFileWriter);
+
 		Sorter mergeSorter = new Sorter(new MergeSorter());
 		Writer mergeConsoleWriter = new Writer(new ConsoleWriter());
 		Writer mergeFileWriter = new Writer(new FileWriter("mergeOutput.txt"));
 		mergeSorter.subscribe(mergeConsoleWriter);
 		mergeSorter.subscribe(mergeFileWriter);
-		
-		shifter.subscribe(treeSorter);
+
+		//shifter.subscribe(treeSorter);
 		shifter.subscribe(mergeSorter);
 		input.subscribe(shifter);
-		
+
 		input.execute();
 	}
 }
