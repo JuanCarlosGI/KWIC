@@ -5,6 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * FileInput is a Concrete Input Class that read the next line in the buffer loaded from a file.
+ * Returns the lower cased line obtained.
+ */
+
 public class FileInput implements InputStrategy {
 	private BufferedReader reader;
 	
