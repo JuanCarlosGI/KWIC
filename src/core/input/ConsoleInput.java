@@ -4,6 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * Console Input is a Concrete Input Class that read the next line in the buffer from console and lower case it.
+ * Returns the lower cased line obtained.
+ */
 public class ConsoleInput implements InputStrategy {
 	
 	private BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
