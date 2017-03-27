@@ -11,7 +11,8 @@ import java.io.InputStreamReader;
 public class ConsoleInput implements InputStrategy {
 	
 	private BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
-
+	
+	// Gets the next line of the list of lines given in the console and returns it
 	public String nextLine() {
 		try {
 			String line = buffer.readLine();
