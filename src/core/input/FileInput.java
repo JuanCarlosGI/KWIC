@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * FileInput is a Concrete Input Class that read the next line in the buffer loaded from a file.
+ * FileInput is a Concrete Strategy that read the next line in the buffer loaded from a file.
  * Returns the lower cased line obtained.
  */
 
